@@ -14,7 +14,8 @@ provider "aws" {
     tags = {
       Environment = var.environment
       ManagedBy   = "terraform"
-      Project     = "cob-data-platform"
+      # Project     = "cob-data-platform"
+      Project     = "cob-data-platform-test"
     }
   }
 }
