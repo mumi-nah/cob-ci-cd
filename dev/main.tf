@@ -2,7 +2,7 @@ module "read-lakehouse" {
   source = "git::https://github.com/mumi-nah/project-cob.git//modules/storage?ref=v1.0.0"
 
   environment = var.environment
-  bucket_purpose = "read-lakehouse"
+  bucket_purpose = "raw-lh"
 }
 
 module "results-lakehouse" {
