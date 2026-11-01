@@ -1,0 +1,7 @@
+COB Limitations / Edits
+
+-- cob module lacks versioning
+-- I read more about using athenaa and saw that it iss important and infact necessary to creaate workgroups for athena.
+Meanwhile, that was not included in project COB, and I decided to add it. That made me saw why I need to add verssioning
+to the entire module. WWhat if it was aalready in use and I decided to go tweak something behinf the scene. SO,
+for stability.
