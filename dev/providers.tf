@@ -14,7 +14,7 @@ provider "aws" {
     tags = {
       Environment = var.environment
       ManagedBy   = "terraform"
-      # Project     = "cob-ci-cd"
+      Project     = "cob-ci-cd"
 
     }
   }
