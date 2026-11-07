@@ -15,6 +15,7 @@ provider "aws" {
       Environment = var.environment
       ManagedBy   = "terraform"
       Project     = "cob-ci-cd"
+
     }
   }
 }
