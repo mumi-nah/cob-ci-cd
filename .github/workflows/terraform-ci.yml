@@ -20,11 +20,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Display GitHub repository IDs
-        run: |
-          echo "Owner ID: ${{ github.repository_owner_id }}"
-          echo "Repository ID: ${{ github.repository_id }}"
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         
@@ -44,4 +39,13 @@ jobs:
         run: terraform validate
 
       - name: Plan
-        run: terraform plan -no-color
+        run: terraform plan -no-color -out=tfplan
+
+      - name: Show plan
+        run: terraform show -no-color tfplan > plan.txt
+
+      - name: Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: dev/plan.txt
