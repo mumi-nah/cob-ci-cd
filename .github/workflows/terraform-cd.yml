@@ -48,7 +48,3 @@ jobs:
 
       - name: Apply
         run: terraform apply tfplan
-
-      - name: Report result
-        if: always()
-        run: echo "Deployment result: ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
