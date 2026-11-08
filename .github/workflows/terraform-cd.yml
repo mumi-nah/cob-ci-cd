@@ -1,6 +1,5 @@
 name: Terraform CD
 
-
 on: 
     push:
         branches:
