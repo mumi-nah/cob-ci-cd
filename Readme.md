@@ -175,7 +175,7 @@ The trust policy and the permissions policy are different things. The trust poli
 
 ### CI: `terraform-ci.yml`
 
-Runs on every pull request into `main`, and can also be started manually from the Actions tab.
+Runs on every pull request into `main`.
 
 1. **Checkout** the repository
 2. **Set up Terraform** at the pinned version
@@ -184,7 +184,7 @@ Runs on every pull request into `main`, and can also be started manually from th
 5. **Init** against the remote backend
 6. **Validate** the configuration
 7. **Plan** and save it to a file
-8. **Publish the plan** as a collapsible comment on the pull request and as a downloadable artifact
+8. **Upload the readable plan output** as a short-lived downloadable artifact for pull request review
 
 Each step has to succeed for the next one to run. A failure stops the job and marks the check red.
 
@@ -192,24 +192,24 @@ Each step has to succeed for the next one to run. A failure stops the job and ma
 
 - Branch protection on `main` requires a pull request, at least one approving review, and a passing CI check
 - Direct pushes to `main` are blocked
-- Reviewers read the plan in the pull request comment. Look for resources being destroyed or replaced, anything being exposed publicly, and changes that could raise cost
+- Reviewers download and inspect the plan artifact from the pull request's Actions run. Look for resources being destroyed or replaced, anything being exposed publicly, and changes that could raise cost
 
 Passing CI does not apply anything. A plan is only a proposal.
 
 ### CD: `terraform-cd.yml`
 
-Runs when a change is merged into `main`.
+Runs on pushes to `main`.
 
-1. **Plan job** generates a plan from the merged code and uploads it
-2. **Apply job** is bound to the `dev` GitHub Environment, which requires an authorised reviewer to approve before the job starts
-3. After approval, the apply job downloads the saved plan and runs `terraform apply` on exactly that plan
-4. The result is written to the run summary, and the run shows green or red
+1. **Plan job** creates a saved plan from the pushed code, shows its readable output in the Actions run summary, and uploads the saved plan as a short-lived artifact
+2. **Apply job** waits for the plan job and is bound to the `dev` GitHub Environment, which can require an authorised reviewer to approve before the job starts
+3. After approval, the apply job downloads the saved plan from that same workflow run and applies exactly that plan
 
 Safety controls:
 
 - Triggers only on pushes to `main`
-- Uses a `concurrency` group per environment with `cancel-in-progress: false`, so deployments queue instead of overlapping and an apply in progress is never interrupted
+- Uses a `concurrency` group for `dev` with `cancel-in-progress: false`, so deployments queue instead of overlapping and an apply in progress is never interrupted
 - State locking provides a second layer of protection against conflicting writes
+- The saved plan artifact is retained for one day; treat it as sensitive because Terraform plans may contain sensitive values
 - A failure at any stage stops the run before the next stage begins
 
 ---
