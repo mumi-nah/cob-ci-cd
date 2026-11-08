@@ -1,0 +1,54 @@
+name: Terraform CD
+
+
+on: 
+    push:
+        branches:
+        - main
+
+permissions:
+    contents: read
+    id-token: write
+
+jobs:
+  apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    environment:
+      name: dev
+
+    defaults:
+      run:
+        working-directory: dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download plan
+        uses: actions/download-artifact@v4
+        with:
+          name: tfplan-cd
+          path: dev
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.GIT_AWS_ROLE }}
+          aws-region: af-south-1
+
+      - name: Init
+        run: terraform init
+
+      - name: Apply
+        run: terraform apply tfplan
+
+      - name: Report result
+        if: always()
+        run: echo "Deployment result: ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
