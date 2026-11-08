@@ -49,3 +49,4 @@ jobs:
         with:
           name: tfplan
           path: dev/plan.txt
+          retention-days: 1
